@@ -11,6 +11,18 @@ object InventoryItemExample {
   sealed  trait InventoryItemEvent
   sealed trait InventoryItemCommand
 
+  case object DeactivateInventoryItem extends InventoryItemCommand
+  case class CreateInventoryItem(name: String) extends InventoryItemCommand
+  case class RenameInventoryItem(newName: String) extends InventoryItemCommand
+  case class CheckInItemsToInventory(count: Int) extends InventoryItemCommand
+  case class RemoveItemsFromInventory(count: Int) extends InventoryItemCommand
+
+  case object InventoryItemDeactivated extends InventoryItemEvent
+  case class InventoryItemCreated(name: String) extends InventoryItemEvent
+  case class InventoryItemRenamed(name: String) extends InventoryItemEvent
+  case class ItemsCheckedInToInventory(count: Int) extends InventoryItemEvent
+  case class ItemsRemovedFromInventory(count: Int) extends InventoryItemEvent
+
 
   object InventoryItemContext extends Context[InventoryItem, InventoryItemCommand, InventoryItemEvent] {
     def execute(command: InventoryItemCommand) = command match{
@@ -43,21 +55,6 @@ object InventoryItemExample {
 
     val repository = new RepositoryInMemory(eventStore, this)
   }
-
-
-  case object DeactivateInventoryItem extends InventoryItemCommand
-  case class CreateInventoryItem(name: String) extends InventoryItemCommand
-  case class RenameInventoryItem(newName: String) extends InventoryItemCommand
-  case class CheckInItemsToInventory(count: Int) extends InventoryItemCommand
-  case class RemoveItemsFromInventory(count: Int) extends InventoryItemCommand
-
-
-  case object InventoryItemDeactivated extends InventoryItemEvent
-  case class InventoryItemCreated(name: String) extends InventoryItemEvent
-  case class InventoryItemRenamed(name: String) extends InventoryItemEvent
-  case class ItemsCheckedInToInventory(count: Int) extends InventoryItemEvent
-  case class ItemsRemovedFromInventory(count: Int) extends InventoryItemEvent
-
 
   val itemId = newIdentifier
   on(InventoryItemContext) handle Command(itemId, CreateInventoryItem("my item"))
